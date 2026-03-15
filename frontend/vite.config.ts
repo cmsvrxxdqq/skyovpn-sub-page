@@ -15,7 +15,9 @@ export default defineConfig({
         react(),
         tsconfigPaths(),
         removeConsole(),
-        webfontDownload(undefined, {}),
+        webfontDownload([
+            'https://fonts.googleapis.com/css2?family=Unbounded:wght@200..900&display=swap'
+        ], {}),
         ViteEjsPlugin((viteConfig) => {
             if (process.env.NODE_ENV === 'production') {
                 return {

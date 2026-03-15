@@ -1,4 +1,5 @@
-import { Box, Center, Container, Group, Image, Stack, Title } from '@mantine/core'
+import { IconCloudRain } from '@tabler/icons-react'
+import { Box, Center, Stack } from '@mantine/core'
 import { TSubscriptionPagePlatformKey } from '@remnawave/subscription-page-types'
 
 import {
@@ -7,15 +8,15 @@ import {
     InstallationGuideConnector,
     MinimalBlockRenderer,
     RawKeysWidget,
-    SubscriptionInfoCardsWidget,
-    SubscriptionInfoCollapsedWidget,
-    SubscriptionInfoExpandedWidget,
     SubscriptionLinkWidget,
     TimelineBlockRenderer
 } from '@widgets/main'
 import { useAppConfig, useAppConfigStoreActions, useCurrentLang } from '@entities/app-config-store'
 import { LanguagePicker } from '@shared/ui/language-picker/language-picker.shared'
-import { Page, RemnawaveLogo } from '@shared/ui'
+import { Page } from '@shared/ui'
+
+import { LiquidGlassHeader } from './liquid-glass-header.component'
+import { LiquidGlassSubscriptionInfo } from './liquid-glass-subscription-info.component'
 
 interface IMainPageComponentProps {
     isMobile: boolean
@@ -27,13 +28,6 @@ const BLOCK_RENDERERS = {
     timeline: TimelineBlockRenderer,
     accordion: AccordionBlockRenderer,
     minimal: MinimalBlockRenderer
-} as const
-
-const SUBSCRIPTION_INFO_BLOCK_RENDERERS = {
-    cards: SubscriptionInfoCardsWidget,
-    collapsed: SubscriptionInfoCollapsedWidget,
-    expanded: SubscriptionInfoExpandedWidget,
-    hidden: null
 } as const
 
 export const MainPageComponent = ({ isMobile, platform }: IMainPageComponentProps) => {
@@ -62,57 +56,30 @@ export const MainPageComponent = ({ isMobile, platform }: IMainPageComponentProp
 
     const atLeastOnePlatformApp = Object.values(hasPlatformApps).some((value) => value)
 
-    const SubscriptionInfoBlockRenderer =
-        SUBSCRIPTION_INFO_BLOCK_RENDERERS[config.uiConfig.subscriptionInfoBlockType]
-
     return (
         <Page>
-            <Box className="header-wrapper" py="md">
-                <Container maw={1200} px={{ base: 'md', sm: 'lg', md: 'xl' }}>
-                    <Group justify="space-between">
-                        <Group gap="sm" style={{ userSelect: 'none' }} wrap="nowrap">
-                            {hasCustomLogo ? (
-                                <Image
-                                    alt="logo"
-                                    fit="contain"
-                                    src={config.brandingSettings.logoUrl}
-                                    style={{
-                                        width: '32px',
-                                        height: '32px',
-                                        flexShrink: 0
-                                    }}
-                                />
-                            ) : (
-                                <RemnawaveLogo c="cyan" size={32} />
-                            )}
-                            <Title
-                                c={hasCustomLogo ? 'white' : 'cyan'}
-                                fw={700}
-                                order={4}
-                                size="lg"
-                            >
-                                {brandName}
-                            </Title>
-                        </Group>
+            <div className="header-wrapper">
+                <LiquidGlassHeader
+                    brandName={brandName}
+                    hasCustomLogo={hasCustomLogo}
+                    icon={<IconCloudRain size={42} />}
+                    isMobile={isMobile}
+                    logoUrl={config.brandingSettings.logoUrl}
+                >
+                    <SubscriptionLinkWidget
+                        hideGetLink={config.baseSettings.hideGetLinkButton}
+                        supportUrl={config.brandingSettings.supportUrl}
+                    />
+                </LiquidGlassHeader>
+            </div>
 
-                        <SubscriptionLinkWidget
-                            hideGetLink={config.baseSettings.hideGetLinkButton}
-                            supportUrl={config.brandingSettings.supportUrl}
-                        />
-                    </Group>
-                </Container>
-            </Box>
-
-            <Container
-                maw={1200}
-                px={{ base: 'md', sm: 'lg', md: 'xl' }}
+            <Box
+                px={0}
                 py="xl"
-                style={{ position: 'relative', zIndex: 1 }}
+                style={{ position: 'relative', zIndex: 1, marginTop: '100px' }}
             >
-                <Stack gap="xl">
-                    {SubscriptionInfoBlockRenderer && (
-                        <SubscriptionInfoBlockRenderer isMobile={isMobile} />
-                    )}
+                <Stack gap={32}>
+                    <LiquidGlassSubscriptionInfo isMobile={isMobile} />
 
                     {atLeastOnePlatformApp && (
                         <InstallationGuideConnector
@@ -127,7 +94,7 @@ export const MainPageComponent = ({ isMobile, platform }: IMainPageComponentProp
 
                     <RawKeysWidget isMobile={isMobile} />
 
-                    <Center>
+                    <Center pb="xl">
                         <LanguagePicker
                             currentLang={currentLang}
                             locales={config.locales}
@@ -135,7 +102,7 @@ export const MainPageComponent = ({ isMobile, platform }: IMainPageComponentProp
                         />
                     </Center>
                 </Stack>
-            </Container>
+            </Box>
         </Page>
     )
 }

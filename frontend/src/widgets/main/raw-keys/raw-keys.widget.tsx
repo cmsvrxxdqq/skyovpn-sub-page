@@ -88,18 +88,31 @@ export const RawKeysWidget = ({ isMobile }: IProps) => {
     }
 
     return (
-        <Card p={{ base: 'sm', xs: 'md', sm: 'lg', md: 'xl' }} radius="lg">
-            <Stack gap="md">
-                <Group gap="sm" justify="space-between">
-                    <Title c="white" fw={600} order={4}>
-                        {t(baseTranslations.connectionKeysHeader)}
-                    </Title>
-                    {parsedLinks.length > 1 && (
-                        <Badge color="cyan" size="lg" variant="light">
-                            {parsedLinks.length}
-                        </Badge>
-                    )}
-                </Group>
+        <Box style={{ maxWidth: '900px', margin: '0 auto', width: '100%' }}>
+            <Box
+                className="liquid-glass"
+                style={{
+                    position: 'relative',
+                    padding: isMobile ? '28px' : '38px 70px'
+                }}
+            >
+                <Stack gap="md">
+                    <Group gap="sm" justify="space-between">
+                        <Title
+                            c="white"
+                            fw={900}
+                            order={4}
+                            size="20px"
+                            style={{ fontFamily: 'Unbounded, sans-serif' }}
+                        >
+                            {t(baseTranslations.connectionKeysHeader)}
+                        </Title>
+                        {parsedLinks.length > 1 && (
+                            <Badge color="cyan" size="lg" variant="light">
+                                {parsedLinks.length}
+                            </Badge>
+                        )}
+                    </Group>
 
                 <ScrollArea.Autosize mah={300} scrollbars="y">
                     <Stack gap="xs">
@@ -164,7 +177,8 @@ export const RawKeysWidget = ({ isMobile }: IProps) => {
                         ))}
                     </Stack>
                 </ScrollArea.Autosize>
-            </Stack>
-        </Card>
+                </Stack>
+            </Box>
+        </Box>
     )
 }

@@ -1,44 +1,150 @@
 html,
 body {
     min-height: 100vh;
-    background-color: #161b23;
-    background-image:
-        linear-gradient(to right, rgba(128, 128, 128, 0.05) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(128, 128, 128, 0.05) 1px, transparent 1px);
-    background-size: 60px 60px;
-    background-attachment: fixed;
+    background-color: rgba(0, 0, 0, 0.4);
     position: relative;
+    overflow-x: hidden;
 }
 
 #root {
-    height: 100vh;
+    min-height: 100vh;
 }
 
-.animated-background {
+/* Watermark background pattern */
+.watermark-background {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
     pointer-events: none;
     z-index: 0;
-    background:
-        radial-gradient(ellipse 60% 40% at 25% 40%, rgba(151, 117, 250, 0.08), transparent 50%),
-        radial-gradient(ellipse 50% 50% at 85% 85%, rgba(34, 211, 238, 0.06), transparent 50%);
+    opacity: 0.1;
+    transform: rotate(20.58deg);
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    color: white;
+    line-height: 18px;
+    white-space: pre-wrap;
+    word-break: break-all;
 }
 
+/* Liquid Glass Effect - Main panels */
+.liquid-glass {
+    position: relative;
+    background: rgba(0, 0, 0, 0.01);
+    border-radius: 40px;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    filter: brightness(110%);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.40),
+        inset 1px 0 0 rgba(255, 255, 255, 0.32),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.13),
+        inset -1px 0 1px rgba(0, 0, 0, 0.11);
+}
+
+.liquid-glass::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(
+        0deg,
+        rgba(228, 228, 228, 1) 0%,
+        rgba(228, 228, 228, 1) 100%
+    ),
+    linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.1) 100%
+    ),
+    linear-gradient(
+        0deg,
+        rgba(51, 51, 51, 1) 0%,
+        rgba(51, 51, 51, 1) 100%
+    );
+    background-blend-mode: color-dodge;
+    z-index: -1;
+}
+
+/* Header liquid glass */
 .header-wrapper {
     position: sticky;
-    top: 0;
+    top: 28px;
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 100;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    background: rgba(22, 27, 35, 0.8);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    max-width: 1000px;
+    width: calc(100% - 56px);
+    margin: 0 auto;
+}
 
-    @media (min-width: 768px) {
-        border-radius: 0 0 var(--mantine-radius-lg) var(--mantine-radius-lg);
-    }
+.header-liquid-glass {
+    background: rgba(0, 0, 0, 0.01);
+    border-radius: 60px;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    filter: brightness(110%);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.40),
+        inset 1px 0 0 rgba(255, 255, 255, 0.32),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.13),
+        inset -1px 0 1px rgba(0, 0, 0, 0.11);
+}
+
+/* Status colors for subscription info */
+.status-active {
+    background: #4d8748;
+    box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.status-expiring {
+    background: #e0b937;
+    box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.status-expired {
+    background: #a25d5d;
+    box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+/* Info tiles */
+.info-tile {
+    border-radius: 25px;
+    box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+    opacity: 0.8;
+}
+
+.info-tile-username {
+    background: #5b8fa8;
+}
+
+.info-tile-status {
+    background: #579a51;
+}
+
+.info-tile-expires {
+    background: #a25d5d;
+}
+
+.info-tile-bandwidth {
+    background: #7d8748;
+}
+
+/* Button glass effect */
+.button-glass {
+    background: rgba(94, 94, 94, 0.2);
+    border-radius: 10px;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    filter: brightness(110%);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.40),
+        inset 1px 0 0 rgba(255, 255, 255, 0.32),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.13),
+        inset -1px 0 1px rgba(0, 0, 0, 0.11);
 }
 
 .logo-text-highlight {
@@ -49,6 +155,7 @@ body {
     color: white;
 }
 
+/* Legacy card styles - keeping for backwards compatibility */
 .info-card-cyan {
     background: linear-gradient(135deg, rgba(34, 211, 238, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%);
     border: 1px solid rgba(34, 211, 238, 0.2);

@@ -27,6 +27,7 @@ import { useAppConfig } from '@entities/app-config-store'
 import { vibrate } from '@shared/utils/vibrate'
 import { useTranslation } from '@shared/hooks'
 
+import wrapperClasses from './installation-guide-wrapper.module.css'
 import { IBlockRendererProps } from './components/blocks/renderer-block.interface'
 import classes from './installation-guide.module.css'
 
@@ -151,47 +152,45 @@ export const InstallationGuideConnector = (props: IProps) => {
     const getIcon = (iconKey: string) => getIconFromLibrary(iconKey, svgLibrary)
 
     return (
-        <Card p={{ base: 'sm', xs: 'md', sm: 'lg', md: 'xl' }} radius="lg">
-            <Stack gap="md">
-                <Group gap="sm" justify="space-between">
-                    <Title c="white" fw={600} order={4}>
-                        {t(baseTranslations.installationGuideHeader)}
-                    </Title>
+        <Box className={wrapperClasses.wrapper}>
+            <Box
+                className="liquid-glass"
+                style={{
+                    position: 'relative',
+                    padding: isMobile ? '28px' : '38px 70px'
+                }}
+            >
+                <Stack gap="md">
+                    <Group gap="sm" justify="space-between">
+                        <Title
+                            c="white"
+                            fw={900}
+                            order={4}
+                            size="20px"
+                            style={{ fontFamily: 'Unbounded, sans-serif' }}
+                        >
+                            {t(baseTranslations.installationGuideHeader)}
+                        </Title>
 
-                    {availablePlatforms.length > 1 && (
-                        <NativeSelect
-                            data={availablePlatforms.map((opt) => ({
-                                value: opt.value,
-                                label: opt.label
-                            }))}
-                            leftSection={
-                                <span
-                                    dangerouslySetInnerHTML={{
-                                        __html: availablePlatforms.find(
-                                            (opt) => opt.value === selectedPlatform
-                                        )!.icon
-                                    }}
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        width: 20,
-                                        height: 20
-                                    }}
-                                />
-                            }
-                            onChange={(event) => {
-                                vibrate([80])
-                                const value = event.target
-                                    .value as unknown as TSubscriptionPagePlatformKey
-                                setSelectedPlatform(value)
-                                setSelectedAppIndex(0)
-                            }}
-                            radius="md"
-                            size="sm"
-                            value={selectedPlatform}
-                            w={150}
-                        />
-                    )}
+                        {availablePlatforms.length > 1 && (
+                            <select
+                                className={wrapperClasses.platformSelector}
+                                onChange={(event) => {
+                                    vibrate([80])
+                                    const value = event.target
+                                        .value as unknown as TSubscriptionPagePlatformKey
+                                    setSelectedPlatform(value)
+                                    setSelectedAppIndex(0)
+                                }}
+                                value={selectedPlatform}
+                            >
+                                {availablePlatforms.map((opt) => (
+                                    <option key={opt.value} value={opt.value}>
+                                        {opt.label}
+                                    </option>
+                                ))}
+                            </select>
+                        )}
                 </Group>
 
                 {platformApps.length > 0 && (
@@ -247,7 +246,8 @@ export const InstallationGuideConnector = (props: IProps) => {
                         )}
                     </Box>
                 )}
-            </Stack>
-        </Card>
+                </Stack>
+            </Box>
+        </Box>
     )
 }

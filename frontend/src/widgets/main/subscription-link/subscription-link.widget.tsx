@@ -61,19 +61,20 @@ export const SubscriptionLinkWidget = ({ supportUrl, hideGetLink }: IProps) => {
         return (
             <ActionIcon
                 c={color}
+                className="button-glass"
                 component="a"
                 href={supportUrl}
                 radius="md"
                 rel="noopener noreferrer"
                 size="xl"
                 style={{
-                    background: 'rgba(255, 255, 255, 0.02)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)'
+                    width: '50px',
+                    height: '50px'
                 }}
                 target="_blank"
-                variant="default"
+                variant="subtle"
             >
-                <Icon />
+                <Icon size={24} />
             </ActionIcon>
         )
     }
@@ -125,13 +126,18 @@ export const SubscriptionLinkWidget = ({ supportUrl, hideGetLink }: IProps) => {
         <Group gap="xs" ml="auto" wrap="nowrap">
             {!hideGetLink && (
                 <ActionIcon
-                    className={classes.actionIcon}
+                    c="white"
+                    className="button-glass"
                     onClick={handleGetLink}
                     radius="md"
                     size="xl"
-                    variant="default"
+                    style={{
+                        width: '50px',
+                        height: '50px'
+                    }}
+                    variant="subtle"
                 >
-                    <IconLink />
+                    <IconLink size={24} />
                 </ActionIcon>
             )}
 

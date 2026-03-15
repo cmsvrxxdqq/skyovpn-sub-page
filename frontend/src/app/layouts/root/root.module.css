@@ -2,16 +2,21 @@
     display: flex;
     flex-grow: 1;
     min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
 }
 
 .content {
     display: flex;
     flex-direction: column;
     width: 100%;
+    position: relative;
+    z-index: 1;
 }
 
 .main {
-    max-width: 800px;
+    max-width: 900px;
     width: 100%;
     align-self: center;
+    padding: 0 28px;
 }

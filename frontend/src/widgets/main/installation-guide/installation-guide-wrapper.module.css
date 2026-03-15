@@ -1,0 +1,24 @@
+.wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.platformSelector {
+    background: #313131;
+    border-radius: 30px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    opacity: 0.8;
+    padding: 8px 16px;
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+.platformSelector:focus {
+    outline: none;
+    opacity: 1;
+}

@@ -17,6 +17,19 @@ import { LoadingScreen } from '@shared/ui'
 
 import classes from './root.module.css'
 
+const WatermarkBackground = () => {
+    const watermarkText =
+        'skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - '
+
+    return (
+        <div className="watermark-background">
+            {Array.from({ length: 150 }).map((_, i) => (
+                <div key={i}>{watermarkText}</div>
+            ))}
+        </div>
+    )
+}
+
 export function RootLayout() {
     const subscriptionActions = useSubscriptionInfoStoreActions()
     const configActions = useAppConfigStoreActions()
@@ -76,7 +89,7 @@ export function RootLayout() {
     if (!isConfigLoaded || !subscription) {
         return (
             <div className={classes.root}>
-                <div className="animated-background"></div>
+                <WatermarkBackground />
                 <div className={classes.content}>
                     <main className={classes.main}>
                         <LoadingScreen height="100vh" />
@@ -88,7 +101,7 @@ export function RootLayout() {
 
     return (
         <div className={classes.root}>
-            <div className="animated-background"></div>
+            <WatermarkBackground />
             <div className={classes.content}>
                 <main className={classes.main}>
                     <Outlet />
