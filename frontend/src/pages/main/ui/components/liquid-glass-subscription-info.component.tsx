@@ -61,19 +61,30 @@ export const LiquidGlassSubscriptionInfo = ({ isMobile }: IProps) => {
 
     const status = getStatusInfo()
 
-    const formatBw = (val: string): { num: string; unit: 'GB' | 'TB' } => {
-        const n = parseFloat(val.replace(/[^\d.]/g, ''))
-        if (isNaN(n)) return { num: '0', unit: 'GB' }
-        if (n >= 1000) return { num: (n / 1000).toFixed(2), unit: 'TB' }
-        return { num: String(Math.round(n)), unit: 'GB' }
+    const formatBw = (val: string): string => {
+        const match = val.match(/([\d.]+)\s*([KMGT]i?B)/i)
+        if (!match) return val
+        const num = parseFloat(match[1])
+        const unit = match[2].replace(/i/i, '').toUpperCase()
+        let bytes: number
+        switch (unit) {
+            case 'KB': bytes = num * 1e3; break
+            case 'MB': bytes = num * 1e6; break
+            case 'GB': bytes = num * 1e9; break
+            case 'TB': bytes = num * 1e12; break
+            default: bytes = num; break
+        }
+        if (bytes >= 1e12) return `${(bytes / 1e12).toFixed(2)} TB`
+        if (bytes >= 1e9) return `${Math.round(bytes / 1e9)} GB`
+        if (bytes >= 1e6) return `${Math.round(bytes / 1e6)} MB`
+        return `${Math.round(bytes / 1e3)} KB`
     }
 
     const bandwidthValue = (() => {
         const used = formatBw(user.trafficUsed)
-        if (user.trafficLimit === '0') return `${used.num} / ∞ ${used.unit}`
+        if (user.trafficLimit === '0') return `${used} / ∞`
         const limit = formatBw(user.trafficLimit)
-        if (used.unit === limit.unit) return `${used.num} / ${limit.num} ${used.unit}`
-        return `${used.num} ${used.unit} / ${limit.num} ${limit.unit}`
+        return `${used} / ${limit}`
     })()
 
     return (
