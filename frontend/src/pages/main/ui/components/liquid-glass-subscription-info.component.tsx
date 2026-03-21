@@ -61,10 +61,11 @@ export const LiquidGlassSubscriptionInfo = ({ isMobile }: IProps) => {
 
     const status = getStatusInfo()
 
-    const formatBytes = (bytesStr: string): string => {
-        const bytes = parseFloat(bytesStr)
+    const formatBytes = (bytesStr: string | number): string => {
+        const bytes = typeof bytesStr === 'string' ? parseFloat(bytesStr) : bytesStr
         if (isNaN(bytes) || bytes === 0) return '0 MB'
-        const MB = 1024 * 1024
+        const KB = 1024
+        const MB = 1024 * KB
         const GB = 1024 * MB
         const TB = 1024 * GB
         if (bytes >= TB) return `${(bytes / TB).toFixed(2)} TB`
@@ -75,7 +76,7 @@ export const LiquidGlassSubscriptionInfo = ({ isMobile }: IProps) => {
 
     const bandwidthValue = (() => {
         const used = formatBytes(user.trafficUsedBytes)
-        if (user.trafficLimitBytes === '0') return `${used}/∞ GB`
+        if (user.trafficLimitBytes === '0' || !user.trafficLimitBytes) return `${used} / ∞ GB`
         const limit = formatBytes(user.trafficLimitBytes)
         return `${used}/${limit}`
     })()
