@@ -1,0 +1,10 @@
+.container {
+    position: fixed;
+    /* Extend beyond viewport to cover iOS overscroll bounce and safe-area gaps */
+    top: -150px;
+    left: -150px;
+    right: -150px;
+    bottom: -150px;
+    z-index: 0;
+    pointer-events: none;
+}

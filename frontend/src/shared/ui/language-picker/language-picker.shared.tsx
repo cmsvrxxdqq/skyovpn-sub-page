@@ -49,22 +49,47 @@ export function LanguagePicker(props: IProps) {
     if (locales.length === 1) return null
 
     return (
-        <Menu position="bottom" width={150} withArrow={false} withinPortal>
+        <Menu
+            position="bottom"
+            width={150}
+            withArrow={false}
+            withinPortal
+            styles={{
+                dropdown: {
+                    background: 'rgba(22, 22, 26, 0.97)',
+                    backdropFilter: 'blur(24px) saturate(180%)',
+                    WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                    borderRadius: '14px',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.45), 0 1px 0 rgba(255, 255, 255, 0.06) inset',
+                    padding: '6px'
+                },
+                item: {
+                    fontFamily: 'var(--qd-font-body)',
+                    color: 'rgba(255, 255, 255, 0.80)',
+                    borderRadius: '8px',
+                    fontSize: '13px',
+                    padding: '8px 12px',
+                    transition: 'background 0.15s ease, color 0.15s ease'
+                }
+            }}
+        >
             <Menu.Target>
                 <ActionIcon
                     color="gray"
                     radius="md"
                     size="xl"
                     style={{
-                        background: 'rgba(255, 255, 255, 0.02)',
-                        border: '1px solid rgba(255, 255, 255, 0.1)'
+                        background: 'rgba(28, 28, 32, 0.72)',
+                        border: '1.5px solid rgba(255, 255, 255, 0.10)',
+                        boxShadow: '0 2px 12px rgba(0, 0, 0, 0.25)'
                     }}
                     variant="default"
                 >
                     <IconLanguage size={22} />
                 </ActionIcon>
             </Menu.Target>
-            <Menu.Dropdown mah={250} style={{ overflowY: 'auto' }}>{items}</Menu.Dropdown>
+            <Menu.Dropdown className="lang-picker-dropdown" mah={250} style={{ overflowY: 'auto' }}>{items}</Menu.Dropdown>
         </Menu>
     )
 }

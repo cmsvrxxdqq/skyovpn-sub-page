@@ -5,11 +5,7 @@ import {
 } from '@remnawave/subscription-page-types'
 import {
     Box,
-    Button,
-    ButtonVariant,
-    Card,
     Group,
-    NativeSelect,
     Stack,
     Title,
     UnstyledButton
@@ -24,6 +20,7 @@ import { useSubscription } from '@entities/subscription-info-store'
 import { getIconFromLibrary } from '@shared/utils/config-parser'
 import { TemplateEngine } from '@shared/utils/template-engine'
 import { useAppConfig } from '@entities/app-config-store'
+import { GlassButton } from '@shared/ui'
 import { vibrate } from '@shared/utils/vibrate'
 import { useTranslation } from '@shared/hooks'
 
@@ -92,6 +89,8 @@ export const InstallationGuideConnector = (props: IProps) => {
             })
         }
 
+        vibrate('tap')
+
         switch (button.type) {
             case 'copyButton': {
                 if (!formattedUrl) return
@@ -100,7 +99,7 @@ export const InstallationGuideConnector = (props: IProps) => {
                 notifications.show({
                     title: t(baseTranslations.linkCopied),
                     message: t(baseTranslations.linkCopiedToClipboard),
-                    color: 'cyan'
+                    color: 'gray'
                 })
                 break
             }
@@ -121,29 +120,27 @@ export const InstallationGuideConnector = (props: IProps) => {
 
     const renderBlockButtons = (
         buttons: TSubscriptionPageButtonConfig[],
-        variant: ButtonVariant
+        _variant: string
     ) => {
         if (buttons.length === 0) return null
 
         return (
             <Group gap="xs" wrap="wrap">
                 {buttons.map((button, index) => (
-                    <Button
+                    <GlassButton
+                        className="glass-button-wrap-cyan"
                         key={index}
-                        leftSection={
-                            <span
-                                dangerouslySetInnerHTML={{
-                                    __html: getIconFromLibrary(button.svgIconKey, svgLibrary)
-                                }}
-                                style={{ display: 'flex', alignItems: 'center' }}
-                            />
-                        }
+                        size={isMobile ? 'lg' : 'default'}
                         onClick={() => handleButtonClick(button)}
-                        radius="md"
-                        variant={variant}
                     >
+                        <span
+                            dangerouslySetInnerHTML={{
+                                __html: getIconFromLibrary(button.svgIconKey, svgLibrary)
+                            }}
+                            style={{ display: 'flex', alignItems: 'center' }}
+                        />
                         {t(button.text)}
-                    </Button>
+                    </GlassButton>
                 ))}
             </Group>
         )
@@ -157,17 +154,20 @@ export const InstallationGuideConnector = (props: IProps) => {
                 className="liquid-glass"
                 style={{
                     position: 'relative',
-                    padding: isMobile ? '28px' : '38px 70px'
+                    padding: isMobile ? '20px' : '28px'
                 }}
             >
                 <Stack gap="md">
                     <Group gap="sm" justify="space-between">
                         <Title
-                            c="white"
-                            fw={900}
+                            c="var(--qd-text-primary)"
+                            fw={700}
                             order={4}
-                            size="20px"
-                            style={{ fontFamily: 'Unbounded, sans-serif' }}
+                            size="18px"
+                            style={{
+                                fontFamily: 'var(--qd-font-display)',
+                                letterSpacing: '-0.03em'
+                            }}
                         >
                             {t(baseTranslations.installationGuideHeader)}
                         </Title>

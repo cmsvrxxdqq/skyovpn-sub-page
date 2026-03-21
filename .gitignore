@@ -142,3 +142,20 @@ docker-compose-local.yml
 /backend/.env
 
 /frontend/public/assets/.app-config-v2.json
+/frontend/.env
+
+# Dev-only files
+.agents/
+.claude/
+.superpowers/
+docs/
+sites_that_i_like/
+temporary screenshots/
+screenshot.mjs
+screenshot-desktop.mjs
+skills-lock.json
+frontend/.agent/
+frontend/.agents/
+frontend/.claude/
+frontend/skills-lock.json
+frontend/fonts/

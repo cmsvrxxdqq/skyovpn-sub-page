@@ -2,6 +2,7 @@
     display: flex;
     flex-grow: 1;
     min-height: 100vh;
+    min-height: 100dvh;
     position: relative;
     overflow-x: hidden;
 }
@@ -15,8 +16,20 @@
 }
 
 .main {
-    max-width: 900px;
+    max-width: 520px;
     width: 100%;
     align-self: center;
-    padding: 0 28px;
+    padding: 12px 20px 0;
+}
+
+@media (min-width: 640px) {
+    .main {
+        max-width: 620px;
+    }
+}
+
+@media (max-width: 480px) {
+    .main {
+        padding: 0 16px;
+    }
 }

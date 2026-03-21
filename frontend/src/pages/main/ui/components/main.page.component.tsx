@@ -58,11 +58,11 @@ export const MainPageComponent = ({ isMobile, platform }: IMainPageComponentProp
 
     return (
         <Page>
-            <div className="header-wrapper">
+            <div className="header-wrapper animate-header" onAnimationEnd={(e) => { e.currentTarget.style.animation = 'none'; e.currentTarget.style.willChange = 'auto' }}>
                 <LiquidGlassHeader
                     brandName={brandName}
                     hasCustomLogo={hasCustomLogo}
-                    icon={<IconCloudRain size={42} />}
+                    icon={<IconCloudRain size={isMobile ? 34 : 28} />}
                     isMobile={isMobile}
                     logoUrl={config.brandingSettings.logoUrl}
                 >
@@ -74,14 +74,18 @@ export const MainPageComponent = ({ isMobile, platform }: IMainPageComponentProp
             </div>
 
             <Box
+                pb="lg"
                 px={0}
-                py="xl"
-                style={{ position: 'relative', zIndex: 1, marginTop: '100px' }}
+                mt={20}
+                style={{ position: 'relative', zIndex: 1 }}
             >
-                <Stack gap={32}>
-                    <LiquidGlassSubscriptionInfo isMobile={isMobile} />
+                <Stack gap={20}>
+                    <div className="animate-card-1" onAnimationEnd={(e) => { e.currentTarget.style.animation = 'none'; e.currentTarget.style.willChange = 'auto' }}>
+                        <LiquidGlassSubscriptionInfo isMobile={isMobile} />
+                    </div>
 
                     {atLeastOnePlatformApp && (
+                        <div className="animate-card-2" onAnimationEnd={(e) => { e.currentTarget.style.animation = 'none'; e.currentTarget.style.willChange = 'auto' }}>
                         <InstallationGuideConnector
                             BlockRenderer={
                                 BLOCK_RENDERERS[config.uiConfig.installationGuidesBlockType]
@@ -90,16 +94,23 @@ export const MainPageComponent = ({ isMobile, platform }: IMainPageComponentProp
                             isMobile={isMobile}
                             platform={platform}
                         />
+                        </div>
                     )}
 
-                    <RawKeysWidget isMobile={isMobile} />
+                    <div className="animate-card-3" onAnimationEnd={(e) => { e.currentTarget.style.animation = 'none'; e.currentTarget.style.willChange = 'auto' }}>
+                        <RawKeysWidget isMobile={isMobile} />
+                    </div>
 
-                    <Center pb="xl">
+                    <Center>
                         <LanguagePicker
                             currentLang={currentLang}
                             locales={config.locales}
                             onLanguageChange={setLanguage}
                         />
+                    </Center>
+
+                    <Center pb="md">
+                        <span className="skyovpn-watermark">⛈️ SkyoVPN | 2026</span>
                     </Center>
                 </Stack>
             </Box>

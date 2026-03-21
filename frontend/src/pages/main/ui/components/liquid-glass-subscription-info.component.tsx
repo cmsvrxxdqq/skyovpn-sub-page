@@ -1,17 +1,11 @@
-import {
-    IconArrowsUpDown,
-    IconCalendar,
-    IconCheck,
-    IconCircleCheck,
-    IconUser
-} from '@tabler/icons-react'
-import { Box, Group, SimpleGrid, Stack, Text } from '@mantine/core'
+import { Box, Group, Stack, Text } from '@mantine/core'
 
 import {
     formatDate,
     getExpirationTextUtil
 } from '@shared/utils/config-parser'
 import { useSubscription } from '@entities/subscription-info-store'
+import { GlowingEffect } from '@shared/ui'
 import { useTranslation } from '@shared/hooks'
 
 interface IProps {
@@ -24,222 +18,246 @@ export const LiquidGlassSubscriptionInfo = ({ isMobile }: IProps) => {
 
     const { user } = subscription
 
-    const getStatusClass = () => {
+    const getStatusInfo = () => {
         if (user.userStatus === 'ACTIVE' && user.daysLeft > 3) {
-            return 'status-active'
+            return {
+                class: 'status-active',
+                color: 'var(--qd-status-active)',
+                label: t(baseTranslations.active),
+                highlight: false
+            }
         }
         if (user.userStatus === 'ACTIVE' && user.daysLeft <= 3 && user.daysLeft > 0) {
-            return 'status-expiring'
+            return {
+                class: 'status-expiring',
+                color: 'var(--qd-status-expiring)',
+                label: t(baseTranslations.expiresIn),
+                highlight: true
+            }
         }
-        return 'status-expired'
+        if (user.userStatus === 'LIMITED') {
+            return {
+                class: 'status-limited',
+                color: 'var(--qd-status-limited)',
+                label: t(baseTranslations.inactive),
+                highlight: true
+            }
+        }
+        if (user.userStatus === 'DISABLED') {
+            return {
+                class: 'status-disabled',
+                color: 'var(--qd-status-disabled)',
+                label: t(baseTranslations.inactive),
+                highlight: true
+            }
+        }
+        return {
+            class: 'status-expired',
+            color: 'var(--qd-status-expired)',
+            label: t(baseTranslations.expired),
+            highlight: true
+        }
     }
 
-    const isActive = user.userStatus === 'ACTIVE'
-    const statusClass = getStatusClass()
-    const bandwidthValue =
-        user.trafficLimit === '0'
-            ? `${user.trafficUsed} / ∞`
-            : `${user.trafficUsed} / ${user.trafficLimit}`
+    const status = getStatusInfo()
+
+    const formatBw = (val: string): { num: string; unit: 'GB' | 'TB' } => {
+        const n = parseFloat(val.replace(/[^\d.]/g, ''))
+        if (isNaN(n)) return { num: '0', unit: 'GB' }
+        if (n >= 1000) return { num: (n / 1000).toFixed(2), unit: 'TB' }
+        return { num: String(Math.round(n)), unit: 'GB' }
+    }
+
+    const bandwidthValue = (() => {
+        const used = formatBw(user.trafficUsed)
+        if (user.trafficLimit === '0') return `${used.num} / ∞ ${used.unit}`
+        const limit = formatBw(user.trafficLimit)
+        if (used.unit === limit.unit) return `${used.num} / ${limit.num} ${used.unit}`
+        return `${used.num} ${used.unit} / ${limit.num} ${limit.unit}`
+    })()
 
     return (
         <Box
-            className="liquid-glass"
+            className="qd-card"
             style={{
-                position: 'relative',
-                padding: isMobile ? '28px' : '38px 70px',
-                maxWidth: '900px',
-                margin: '0 auto',
-                width: '100%'
+                padding: isMobile ? '24px 20px' : '32px',
+                width: '100%',
+                border: 'none'
             }}
         >
-            <Stack gap={isMobile ? 'sm' : 'md'}>
-                <Box
-                    className={statusClass}
-                    style={{
-                        borderRadius: '90px',
-                        padding: isMobile ? '12px 24px' : '16px 32px',
-                        position: 'relative'
-                    }}
-                >
-                    <Group gap="md" wrap="nowrap">
-                        <IconCircleCheck color="white" size={isMobile ? 36 : 48} />
-                        <Stack gap={4}>
-                            <Text
-                                c="white"
-                                fw={900}
-                                lh={1.2}
-                                size={isMobile ? 'lg' : 'xl'}
-                                style={{
-                                    fontFamily: 'Unbounded, sans-serif',
-                                    wordBreak: 'break-word'
-                                }}
-                            >
-                                {user.username}
-                            </Text>
-                            <Text
-                                c="white"
-                                fw={900}
-                                lh={1.2}
-                                size={isMobile ? 'md' : 'lg'}
-                                style={{
-                                    fontFamily: 'Unbounded, sans-serif'
-                                }}
-                            >
-                                {getExpirationTextUtil(
-                                    user.expiresAt,
-                                    currentLang,
-                                    baseTranslations
-                                )}
-                            </Text>
-                        </Stack>
+            <GlowingEffect borderWidth={2} />
+            <Stack gap={isMobile ? 20 : 24} align="center">
+                {/* Status + Username */}
+                <Stack gap={8} align="center" style={{ width: '100%' }}>
+                    {/* Status dot + label */}
+                    <Group gap={4} justify="center" wrap="nowrap" align="center">
+                        <Box
+                            className={status.class}
+                            style={{
+                                width: 8,
+                                height: 8,
+                                borderRadius: '50%',
+                                backgroundColor: status.color,
+                                animation: 'breathingPulse 3s ease-in-out infinite',
+                                flexShrink: 0,
+                                position: 'relative',
+                                top: 0
+                            }}
+                        />
+                        <Text
+                            fw={600}
+                            style={{
+                                fontFamily: 'var(--qd-font-body)',
+                                fontSize: '13px',
+                                color: status.color,
+                                letterSpacing: '0.0em',
+                                textTransform: 'uppercase' as const
+                            }}
+                        >
+                            {status.label}
+                        </Text>
                     </Group>
-                </Box>
 
-                <SimpleGrid cols={{ base: 1, xs: 2 }} spacing="md" verticalSpacing="md">
-                    <Box
-                        className="info-tile info-tile-username"
+                    {/* Username */}
+                    <Text
+                        fw={700}
+                        ta="center"
                         style={{
-                            padding: isMobile ? '16px' : '20px 24px'
+                            fontFamily: 'var(--qd-font-display)',
+                            fontSize: isMobile ? '18px' : '22px',
+                            color: 'var(--qd-text-primary)',
+                            letterSpacing: '-0.03em',
+                            lineHeight: 1.2,
+                            wordBreak: 'break-all' as const,
+                            maxWidth: '100%'
                         }}
                     >
-                        <Group gap="xs" mb={4} wrap="nowrap">
-                            <IconUser color="rgba(255, 255, 255, 0.6)" size={20} />
-                            <Text
-                                c="rgba(255, 255, 255, 0.6)"
-                                fw={300}
-                                lh={1}
-                                size="15px"
-                                style={{
-                                    fontFamily: 'Unbounded, sans-serif'
-                                }}
-                            >
-                                {t(baseTranslations.name)}
-                            </Text>
-                        </Group>
-                        <Text
-                            c="white"
-                            fw={900}
-                            pl={isMobile ? 0 : 20}
-                            size={isMobile ? 'lg' : '26px'}
-                            style={{
-                                fontFamily: 'Unbounded, sans-serif',
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis'
-                            }}
-                        >
-                            {user.username}
-                        </Text>
-                    </Box>
+                        {user.username}
+                    </Text>
 
-                    <Box
-                        className="info-tile info-tile-status"
+                    {/* Expiration subtitle */}
+                    <Text
+                        ta="center"
                         style={{
-                            padding: isMobile ? '16px' : '20px 24px'
+                            fontFamily: 'var(--qd-font-body)',
+                            fontSize: '13px',
+                            color: 'var(--qd-text-secondary)',
+                            lineHeight: 1.4
                         }}
                     >
-                        <Group gap="xs" mb={4} wrap="nowrap">
-                            <IconCheck color="rgba(255, 255, 255, 0.6)" size={20} />
-                            <Text
-                                c="rgba(255, 255, 255, 0.6)"
-                                fw={300}
-                                lh={1}
-                                size="15px"
-                                style={{
-                                    fontFamily: 'Unbounded, sans-serif'
-                                }}
-                            >
-                                {t(baseTranslations.status)}
-                            </Text>
-                        </Group>
-                        <Text
-                            c="white"
-                            fw={900}
-                            pl={isMobile ? 0 : 20}
-                            size={isMobile ? 'lg' : '26px'}
-                            style={{
-                                fontFamily: 'Unbounded, sans-serif',
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis'
-                            }}
-                        >
-                            {isActive ? t(baseTranslations.active) : t(baseTranslations.inactive)}
-                        </Text>
-                    </Box>
+                        {getExpirationTextUtil(
+                            user.expiresAt,
+                            currentLang,
+                            baseTranslations
+                        )}
+                    </Text>
+                </Stack>
 
-                    <Box
-                        className="info-tile info-tile-expires"
-                        style={{
-                            padding: isMobile ? '16px' : '20px 24px'
-                        }}
-                    >
-                        <Group gap="xs" mb={4} wrap="nowrap">
-                            <IconCalendar color="rgba(255, 255, 255, 0.6)" size={20} />
-                            <Text
-                                c="rgba(255, 255, 255, 0.6)"
-                                fw={300}
-                                lh={1}
-                                size="15px"
+                {/* Metrics */}
+                {isMobile ? (
+                    // Mobile: vertical rows — label left, value right, no overflow possible
+                    <Stack gap={0} style={{ width: '100%', borderRadius: '14px', overflow: 'hidden', border: '1px solid var(--qd-surface-border)' }}>
+                        {[
+                            { label: t(baseTranslations.bandwidth), value: bandwidthValue, color: 'var(--qd-text-primary)' },
+                            { label: t(baseTranslations.expires), value: formatDate(user.expiresAt, currentLang, baseTranslations), color: 'var(--qd-text-primary)' },
+                            { label: t(baseTranslations.status), value: status.label, color: status.highlight ? status.color : 'var(--qd-text-primary)' }
+                        ].map((item, i, arr) => (
+                            <Box
+                                key={item.label}
                                 style={{
-                                    fontFamily: 'Unbounded, sans-serif'
+                                    background: 'var(--qd-surface-elevated)',
+                                    borderBottom: i < arr.length - 1 ? '1px solid var(--qd-surface-border)' : 'none',
+                                    padding: '12px 16px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    gap: '12px'
                                 }}
                             >
-                                {t(baseTranslations.expires)}
-                            </Text>
-                        </Group>
-                        <Text
-                            c="white"
-                            fw={900}
-                            pl={isMobile ? 0 : 20}
-                            size={isMobile ? 'lg' : '26px'}
-                            style={{
-                                fontFamily: 'Unbounded, sans-serif',
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis'
-                            }}
-                        >
-                            {formatDate(user.expiresAt, currentLang, baseTranslations)}
-                        </Text>
-                    </Box>
-
-                    <Box
-                        className="info-tile info-tile-bandwidth"
-                        style={{
-                            padding: isMobile ? '16px' : '20px 24px'
-                        }}
-                    >
-                        <Group gap="xs" mb={4} wrap="nowrap">
-                            <IconArrowsUpDown color="rgba(255, 255, 255, 0.6)" size={20} />
-                            <Text
-                                c="rgba(255, 255, 255, 0.6)"
-                                fw={300}
-                                lh={1}
-                                size="15px"
+                                <Text
+                                    style={{
+                                        fontFamily: 'var(--qd-font-body)',
+                                        fontSize: '11px',
+                                        fontWeight: 500,
+                                        color: 'var(--qd-text-tertiary)',
+                                        textTransform: 'uppercase' as const,
+                                        letterSpacing: '0.06em',
+                                        whiteSpace: 'nowrap',
+                                        flexShrink: 0
+                                    }}
+                                >
+                                    {item.label}
+                                </Text>
+                                <Text
+                                    fw={700}
+                                    style={{
+                                        fontFamily: 'var(--qd-font-display)',
+                                        fontSize: '13px',
+                                        color: item.color,
+                                        letterSpacing: '-0.02em',
+                                        whiteSpace: 'nowrap',
+                                        textAlign: 'right' as const
+                                    }}
+                                >
+                                    {item.value}
+                                </Text>
+                            </Box>
+                        ))}
+                    </Stack>
+                ) : (
+                    // Desktop: 3 columns
+                    <Group gap={10} grow style={{ width: '100%' }} wrap="nowrap">
+                        {[
+                            { label: t(baseTranslations.bandwidth), value: bandwidthValue, color: 'var(--qd-text-primary)' },
+                            { label: t(baseTranslations.expires), value: formatDate(user.expiresAt, currentLang, baseTranslations), color: 'var(--qd-text-primary)' },
+                            { label: t(baseTranslations.status), value: status.label, color: status.highlight ? status.color : 'var(--qd-text-primary)' }
+                        ].map((item) => (
+                            <Box
+                                key={item.label}
                                 style={{
-                                    fontFamily: 'Unbounded, sans-serif'
+                                    background: 'var(--qd-surface-elevated)',
+                                    border: '1px solid var(--qd-surface-border)',
+                                    borderRadius: '14px',
+                                    padding: '16px',
+                                    textAlign: 'center' as const,
+                                    flex: 1,
+                                    minWidth: 0
                                 }}
                             >
-                                {t(baseTranslations.bandwidth)}
-                            </Text>
-                        </Group>
-                        <Text
-                            c="white"
-                            fw={900}
-                            pl={isMobile ? 0 : 20}
-                            size={isMobile ? 'lg' : '26px'}
-                            style={{
-                                fontFamily: 'Unbounded, sans-serif',
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis'
-                            }}
-                        >
-                            {bandwidthValue}
-                        </Text>
-                    </Box>
-                </SimpleGrid>
+                                <Stack gap={4} align="center">
+                                    <Text
+                                        style={{
+                                            fontFamily: 'var(--qd-font-body)',
+                                            fontSize: '10px',
+                                            fontWeight: 500,
+                                            color: 'var(--qd-text-tertiary)',
+                                            textTransform: 'uppercase' as const,
+                                            letterSpacing: '0.06em',
+                                            whiteSpace: 'nowrap'
+                                        }}
+                                    >
+                                        {item.label}
+                                    </Text>
+                                    <Text
+                                        fw={700}
+                                        style={{
+                                            fontFamily: 'var(--qd-font-display)',
+                                            fontSize: '13px',
+                                            color: item.color,
+                                            letterSpacing: '-0.02em',
+                                            whiteSpace: 'nowrap',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            maxWidth: '100%'
+                                        }}
+                                    >
+                                        {item.value}
+                                    </Text>
+                                </Stack>
+                            </Box>
+                        ))}
+                    </Group>
+                )}
             </Stack>
         </Box>
     )

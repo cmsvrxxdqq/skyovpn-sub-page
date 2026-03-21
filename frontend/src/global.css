@@ -1,197 +1,777 @@
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@200;300;400;500;600;700;800;900&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+/* ──────────────────────────────────────────
+   Quiet Depth — Design System
+────────────────────────────────────────── */
+:root {
+    --qd-primary: #C5CDE0;
+    --qd-primary-hover: #D5DCE8;
+    --qd-primary-soft: rgba(255, 255, 255, 0.07);
+    --qd-primary-glow: rgba(255, 255, 255, 0.14);
+    --qd-surface: rgba(20, 20, 24, 0.85);
+    --qd-surface-elevated: rgba(26, 26, 30, 0.88);
+    --qd-surface-border: rgba(255, 255, 255, 0.08);
+    --qd-surface-border-hover: rgba(255, 255, 255, 0.16);
+    --qd-surface-hover: rgba(255, 255, 255, 0.04);
+    --qd-text-primary: rgba(255, 255, 255, 0.93);
+    --qd-text-secondary: rgba(255, 255, 255, 0.50);
+    --qd-text-tertiary: rgba(255, 255, 255, 0.30);
+    --qd-status-active: #34D399;
+    --qd-status-expiring: #FBBF24;
+    --qd-status-expired: #F87171;
+    --qd-status-limited: #FB923C;
+    --qd-status-disabled: #94A3B8;
+    --qd-radius-card: 20px;
+    --qd-radius-button: 12px;
+    --qd-radius-pill: 100px;
+    --qd-font-display: 'Unbounded', sans-serif;
+    --qd-font-body: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    --qd-shadow-card: 0 4px 24px rgba(0, 0, 0, 0.25), 0 1px 3px rgba(0, 0, 0, 0.15);
+    --qd-shadow-card-hover: 0 8px 40px rgba(0, 0, 0, 0.35), 0 2px 6px rgba(0, 0, 0, 0.2);
+    --qd-transition-spring: cubic-bezier(0.22, 1, 0.36, 1);
+    --qd-transition-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ──────────────────────────────────────────
+   Base reset
+────────────────────────────────────────── */
+html {
+    scroll-behavior: smooth;
+    /* overflow-y: scroll removed — on iOS WKWebView this causes position:fixed to behave as position:absolute */
+    scrollbar-gutter: stable;
+}
+
+@media (min-width: 640px) {
+    html {
+        zoom: 1.25;
+    }
+}
+
 html,
 body {
     min-height: 100vh;
-    background-color: rgba(0, 0, 0, 0.4);
+    min-height: 100dvh;
+    background-color: #0d0d11;
     position: relative;
-    overflow-x: hidden;
+    /* Removed overflow-x: hidden to prevent iOS scrolling issues */
+    font-family: var(--qd-font-body);
+    font-weight: 500;
+    color: var(--qd-text-primary);
+    /* Prevent iOS overscroll bounce from revealing blank areas */
+    overscroll-behavior-y: none;
+    -webkit-overflow-scrolling: touch;
+    /* Extend content into iOS safe areas (requires viewport-fit=cover) */
+    padding-bottom: env(safe-area-inset-bottom, 0px);
 }
+
+/* Fix iOS background by lifting it to an oversized fixed layer. 
+   This safely covers the overscroll rubber-banding without black bars. */
+body::before {
+    content: '';
+    position: fixed;
+    top: -150px;
+    left: -150px;
+    right: -150px;
+    bottom: -150px;
+    background-color: #0d0d11;
+    background-image:
+        radial-gradient(ellipse 100% 80% at 50% 40%, rgba(26, 26, 32, 0.6), transparent 70%),
+        radial-gradient(ellipse 70% 50% at 80% 75%, rgba(22, 22, 28, 0.35), transparent 55%);
+    background-position: center;
+    background-size: 100vw 100vh;
+    background-repeat: no-repeat;
+    z-index: -10;
+    pointer-events: none;
+}
+
 
 #root {
     min-height: 100vh;
+    min-height: 100dvh;
 }
 
-/* Watermark background pattern */
-.watermark-background {
-    position: fixed;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.1;
-    transform: rotate(20.58deg);
-    font-family: 'Unbounded', sans-serif;
-    font-weight: 600;
-    font-size: 12px;
-    color: white;
-    line-height: 18px;
-    white-space: pre-wrap;
-    word-break: break-all;
+/* ──────────────────────────────────────────
+   Entrance animations
+────────────────────────────────────────── */
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-/* Liquid Glass Effect - Main panels */
-.liquid-glass {
-    position: relative;
-    background: rgba(0, 0, 0, 0.01);
-    border-radius: 40px;
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
-    filter: brightness(110%);
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.40),
-        inset 1px 0 0 rgba(255, 255, 255, 0.32),
-        inset 0 -1px 1px rgba(0, 0, 0, 0.13),
-        inset -1px 0 1px rgba(0, 0, 0, 0.11);
+@keyframes breathingPulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 var(--pulse-color, rgba(52, 211, 153, 0.4));
+    }
+    50% {
+        transform: scale(1.15);
+        box-shadow: 0 0 12px 4px var(--pulse-color, rgba(52, 211, 153, 0.15));
+    }
 }
 
-.liquid-glass::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: linear-gradient(
-        0deg,
-        rgba(228, 228, 228, 1) 0%,
-        rgba(228, 228, 228, 1) 100%
-    ),
-    linear-gradient(
-        0deg,
-        rgba(255, 255, 255, 0.1) 0%,
-        rgba(255, 255, 255, 0.1) 100%
-    ),
-    linear-gradient(
-        0deg,
-        rgba(51, 51, 51, 1) 0%,
-        rgba(51, 51, 51, 1) 100%
-    );
-    background-blend-mode: color-dodge;
-    z-index: -1;
+.animate-header {
+    animation: fadeSlideUp 0.5s var(--qd-transition-spring) both;
+    animation-delay: 0.05s;
+    will-change: transform, opacity;
 }
 
-/* Header liquid glass */
+.animate-card-1 {
+    animation: fadeSlideUp 0.5s var(--qd-transition-spring) both;
+    animation-delay: 0.12s;
+    will-change: transform, opacity;
+}
+
+.animate-card-2 {
+    animation: fadeSlideUp 0.5s var(--qd-transition-spring) both;
+    animation-delay: 0.22s;
+    will-change: transform, opacity;
+}
+
+.animate-card-3 {
+    animation: fadeSlideUp 0.5s var(--qd-transition-spring) both;
+    animation-delay: 0.32s;
+    will-change: transform, opacity;
+}
+
+/* ──────────────────────────────────────────
+   Header (sticky pill)
+────────────────────────────────────────── */
 .header-wrapper {
     position: sticky;
-    top: 28px;
-    left: 50%;
-    transform: translateX(-50%);
+    top: 12px;
     z-index: 100;
-    max-width: 1000px;
-    width: calc(100% - 56px);
-    margin: 0 auto;
+    width: 100%;
 }
 
 .header-liquid-glass {
-    background: rgba(0, 0, 0, 0.01);
-    border-radius: 60px;
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
-    filter: brightness(110%);
+    background: rgba(20, 20, 24, 0.85) !important;
+    border-radius: 20px !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.10) !important;
     box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.40),
-        inset 1px 0 0 rgba(255, 255, 255, 0.32),
-        inset 0 -1px 1px rgba(0, 0, 0, 0.13),
-        inset -1px 0 1px rgba(0, 0, 0, 0.11);
+        0 4px 32px rgba(0, 0, 0, 0.25),
+        0 1px 0 rgba(255, 255, 255, 0.06) inset !important;
+    filter: none !important;
+    position: relative !important;
+    overflow: hidden !important;
+    backdrop-filter: blur(24px) !important;
+    -webkit-backdrop-filter: blur(24px) !important;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 }
 
-/* Status colors for subscription info */
+.header-liquid-glass::before,
+.header-liquid-glass::after {
+    display: none;
+}
+
+/* ──────────────────────────────────────────
+   Header — logo badge & action cluster
+────────────────────────────────────────── */
+
+/* Brand icon — no circle, raw icon */
+.header-logo-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--qd-text-primary);
+    position: relative;
+    z-index: 1;
+}
+
+/* Grouped action buttons container */
+.header-actions-pill {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 14px;
+    padding: 5px;
+    flex-shrink: 0;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    z-index: 1;
+}
+
+/* Square icon buttons inside the header pill */
+.header-actions-pill .glass-button--icon {
+    border-radius: 9px;
+}
+
+.header-actions-pill .glass-button-text--icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 9px;
+    padding: 0;
+    justify-content: center;
+}
+
+.header-actions-pill .glass-button-text svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Remove floating shadow blobs inside the tight pill */
+.header-actions-pill .glass-button-shadow {
+    display: none;
+}
+
+/* ──────────────────────────────────────────
+   Cards — quiet surface
+────────────────────────────────────────── */
+.qd-card {
+    position: relative;
+    background: var(--qd-surface);
+    border-radius: var(--qd-radius-card);
+    border: 1.5px solid rgba(255, 255, 255, 0.10);
+    box-shadow: var(--qd-shadow-card);
+    transition:
+        box-shadow 0.25s ease,
+        transform 0.25s var(--qd-transition-spring);
+}
+
+.qd-card:hover {
+    box-shadow: var(--qd-shadow-card-hover);
+}
+
+.qd-card::before {
+    display: none;
+}
+
+/* Legacy compat — used by widgets that still reference liquid-glass */
+.liquid-glass {
+    position: relative;
+    background: var(--qd-surface);
+    border-radius: var(--qd-radius-card);
+    border: 1.5px solid rgba(255, 255, 255, 0.10);
+    box-shadow: var(--qd-shadow-card);
+    overflow: hidden;
+}
+
+.liquid-glass::before,
+.liquid-glass::after {
+    display: none;
+}
+
+/* ──────────────────────────────────────────
+   Section label
+────────────────────────────────────────── */
+.section-label {
+    display: block;
+}
+
+/* ──────────────────────────────────────────
+   Status colors (subscription status)
+────────────────────────────────────────── */
 .status-active {
-    background: #4d8748;
-    box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+    --pulse-color: rgba(52, 211, 153, 0.4);
+    color: var(--qd-status-active);
 }
 
 .status-expiring {
-    background: #e0b937;
-    box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+    --pulse-color: rgba(251, 191, 36, 0.4);
+    color: var(--qd-status-expiring);
 }
 
 .status-expired {
-    background: #a25d5d;
-    box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+    --pulse-color: rgba(248, 113, 113, 0.4);
+    color: var(--qd-status-expired);
 }
 
-/* Info tiles */
-.info-tile {
-    border-radius: 25px;
-    box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
-    opacity: 0.8;
+.status-limited {
+    --pulse-color: rgba(251, 146, 60, 0.4);
+    color: var(--qd-status-limited);
 }
 
-.info-tile-username {
-    background: #5b8fa8;
+.status-disabled {
+    --pulse-color: rgba(148, 163, 184, 0.4);
+    color: var(--qd-status-disabled);
 }
 
-.info-tile-status {
-    background: #579a51;
+/* ──────────────────────────────────────────
+   Glass Buttons — 21st.dev style
+   Frosted glass, pill shape, white tinted
+────────────────────────────────────────── */
+.glass-button-wrap {
+    position: relative;
+    display: inline-flex;
+    cursor: pointer;
 }
 
-.info-tile-expires {
-    background: #a25d5d;
+.glass-button {
+    all: unset;
+    position: relative;
+    isolation: isolate;
+    cursor: pointer;
+    border-radius: 9999px;
+    transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+    -webkit-tap-highlight-color: transparent;
 }
 
-.info-tile-bandwidth {
-    background: #7d8748;
+.glass-button:hover {
+    transform: translateY(-2px);
 }
 
-/* Button glass effect */
-.button-glass {
-    background: rgba(94, 94, 94, 0.2);
-    border-radius: 10px;
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
-    filter: brightness(110%);
+.glass-button:active {
+    transform: translateY(1px) scale(0.98);
+    transition-duration: 0.08s;
+}
+
+/* Size variants — all pill */
+.glass-button--default { border-radius: 9999px; }
+.glass-button--sm      { border-radius: 9999px; }
+.glass-button--lg      { border-radius: 9999px; }
+.glass-button--icon    { border-radius: 9999px; }
+
+.glass-button-text {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    font-family: var(--qd-font-body);
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.92);
+    letter-spacing: -0.02em;
+    user-select: none;
+    white-space: nowrap;
+    /* Pure frosted glass — white tinted */
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.20);
+    border-radius: 9999px;
+    backdrop-filter: blur(20px) saturate(180%) brightness(1.1);
+    -webkit-backdrop-filter: blur(20px) saturate(180%) brightness(1.1);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
     box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.40),
-        inset 1px 0 0 rgba(255, 255, 255, 0.32),
-        inset 0 -1px 1px rgba(0, 0, 0, 0.13),
-        inset -1px 0 1px rgba(0, 0, 0, 0.11);
+        0 1px 0 rgba(255, 255, 255, 0.22) inset,
+        0 -1px 0 rgba(0, 0, 0, 0.06) inset,
+        0 2px 8px rgba(0, 0, 0, 0.18);
+    overflow: hidden;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
+/* Top specular highlight — glass lens refraction */
+.glass-button-text::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 20%;
+    right: 20%;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.50) 40%,
+        rgba(255, 255, 255, 0.20) 60%,
+        transparent
+    );
+    pointer-events: none;
+}
+
+.glass-button:hover .glass-button-text {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.30);
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.28) inset,
+        0 -1px 0 rgba(0, 0, 0, 0.06) inset,
+        0 4px 20px rgba(255, 255, 255, 0.08),
+        0 2px 8px rgba(0, 0, 0, 0.20);
+}
+
+.glass-button:active .glass-button-text {
+    background: rgba(255, 255, 255, 0.07);
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.14) inset,
+        0 -1px 0 rgba(0, 0, 0, 0.06) inset;
+}
+
+/* Size variants */
+.glass-button-text--default { padding: 10px 22px; font-size: 13px; border-radius: 9999px; }
+.glass-button-text--sm      { padding: 7px 16px;  font-size: 12px; border-radius: 9999px; }
+.glass-button-text--lg      { padding: 16px 32px; font-size: 16px; border-radius: 9999px; }
+.glass-button-text--icon    { padding: 0; width: 40px; height: 40px; justify-content: center; border-radius: 9999px; }
+
+.glass-button-text > span {
+    display: flex;
+    align-items: center;
+}
+
+.glass-button-text > span svg,
+.glass-button-text svg {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+}
+
+/* Click ripple */
+.glass-ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.08) 60%, transparent 100%);
+    transform: scale(0);
+    animation: glass-ripple 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    pointer-events: none;
+    z-index: 20;
+}
+
+@keyframes glass-ripple {
+    to {
+        transform: scale(1);
+        opacity: 0;
+    }
+}
+
+/* Soft diffused shadow beneath button */
+.glass-button-shadow {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    bottom: -8px;
+    height: 50%;
+    border-radius: 9999px;
+    background: rgba(200, 210, 230, 0.12);
+    filter: blur(14px);
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.65;
+    transition:
+        opacity 0.2s ease,
+        filter 0.2s ease,
+        transform 0.2s ease;
+}
+
+.glass-button-wrap:hover .glass-button-shadow {
+    opacity: 1;
+    filter: blur(18px);
+    transform: translateY(2px);
+}
+
+.glass-button-wrap:active .glass-button-shadow {
+    opacity: 0.35;
+    filter: blur(8px);
+    transform: translateY(-1px);
+}
+
+/* Primary / accent variant */
+.glass-button-wrap-primary .glass-button-text {
+    background: rgba(18, 18, 20, 0.82);
+    border-color: rgba(255, 255, 255, 0.22);
+    color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.40), 0 1px 0 rgba(255, 255, 255, 0.08) inset;
+}
+
+.glass-button-wrap-primary:hover .glass-button-text {
+    background: rgba(28, 28, 32, 0.90);
+    border-color: rgba(255, 255, 255, 0.32);
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.12) inset,
+        0 4px 20px rgba(0, 0, 0, 0.45);
+}
+
+.glass-button-wrap-primary .glass-button-shadow {
+    background: rgba(200, 210, 230, 0.16);
+}
+
+/* Cyan/primary variant — alias */
+.glass-button-wrap-cyan .glass-button-text {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.18);
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.glass-button-wrap-cyan:hover .glass-button-text {
+    background: rgba(255, 255, 255, 0.13);
+    border-color: rgba(255, 255, 255, 0.28);
+}
+
+/* ──────────────────────────────────────────
+   Glass pill buttons (header actions etc)
+────────────────────────────────────────── */
+.button-glass {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid var(--qd-surface-border) !important;
+    border-radius: 10px !important;
+    transition:
+        background 0.18s ease,
+        border-color 0.18s ease,
+        transform 0.15s ease,
+        box-shadow 0.18s ease !important;
+}
+
+.button-glass:hover {
+    background: rgba(255, 255, 255, 0.09) !important;
+    border-color: var(--qd-surface-border-hover) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+.button-glass:active {
+    transform: translateY(1px) scale(0.97) !important;
+    transition-duration: 0.08s !important;
+}
+
+/* ──────────────────────────────────────────
+   Glass pill buttons (standalone, not GlassButton wrapper)
+────────────────────────────────────────── */
+.glass-pill-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 18px;
+    border-radius: var(--qd-radius-button);
+    font-family: var(--qd-font-body);
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.92);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    cursor: pointer;
+    outline: none;
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.2s ease;
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.12) inset,
+        0 8px 28px rgba(0, 0, 0, 0.25);
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+    overflow: hidden;
+}
+
+.glass-pill-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 15%;
+    right: 15%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28) 40%, rgba(255, 255, 255, 0.10) 60%, transparent);
+    pointer-events: none;
+}
+
+.glass-pill-btn:hover {
+    background: rgba(255, 255, 255, 0.10);
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.16) inset,
+        0 12px 36px rgba(0, 0, 0, 0.30);
+}
+
+.glass-pill-btn:active {
+    transform: translateY(1px) scale(0.98);
+    transition-duration: 0.08s;
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.08) inset,
+        0 4px 12px rgba(0, 0, 0, 0.20);
+}
+
+.glass-pill-btn svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+
+.glass-pill-btn-cyan {
+    /* Unified with base */
+}
+
+.glass-pill-btn-cyan:hover {
+    /* Unified with base */
+}
+
+/* ──────────────────────────────────────────
+   Info rows — unified quiet style
+────────────────────────────────────────── */
+.info-row {
+    position: relative;
+    background: var(--qd-surface-elevated);
+    border: 1.5px solid rgba(255, 255, 255, 0.10);
+    border-radius: 14px;
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.info-row::before {
+    display: none;
+}
+
+.info-row:hover {
+    transform: translateY(-1px);
+    border-color: var(--qd-surface-border-hover);
+}
+
+/* All row variants now share the same quiet style */
+.info-row-username,
+.info-row-status,
+.info-row-bandwidth,
+.info-row-expires {
+    background: var(--qd-surface-elevated);
+    border: 1.5px solid rgba(255, 255, 255, 0.10);
+    box-shadow: none;
+}
+
+/* ──────────────────────────────────────────
+   Info tiles (kept for compatibility)
+────────────────────────────────────────── */
+.info-tile {
+    border-radius: 14px;
+    background: var(--qd-surface-elevated);
+    border: 1.5px solid rgba(255, 255, 255, 0.10);
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease;
+    overflow: hidden;
+    position: relative;
+}
+
+.info-tile:hover {
+    transform: translateY(-1px);
+    border-color: var(--qd-surface-border-hover);
+}
+
+.info-tile::before {
+    display: none;
+}
+
+.info-tile-username,
+.info-tile-status,
+.info-tile-expires,
+.info-tile-bandwidth {
+    background: var(--qd-surface-elevated);
+    border: 1.5px solid rgba(255, 255, 255, 0.10);
+    box-shadow: none;
+}
+
+/* ──────────────────────────────────────────
+   Legacy card color variants (admin theme)
+────────────────────────────────────────── */
 .logo-text-highlight {
-    color: var(--mantine-color-cyan-4);
+    color: var(--qd-primary);
 }
 
 .logo-text-normal {
     color: white;
 }
 
-/* Legacy card styles - keeping for backwards compatibility */
 .info-card-cyan {
-    background: linear-gradient(135deg, rgba(34, 211, 238, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%);
-    border: 1px solid rgba(34, 211, 238, 0.2);
+    background: rgba(79, 106, 255, 0.08);
+    border: 1px solid rgba(79, 106, 255, 0.15);
 }
 
 .info-card-violet {
-    background: linear-gradient(135deg, rgba(151, 117, 250, 0.1) 0%, rgba(132, 94, 247, 0.05) 100%);
-    border: 1px solid rgba(151, 117, 250, 0.2);
+    background: rgba(151, 117, 250, 0.08);
+    border: 1px solid rgba(151, 117, 250, 0.15);
 }
 
 .info-card-green {
-    background: linear-gradient(135deg, rgba(64, 192, 87, 0.1) 0%, rgba(55, 178, 77, 0.05) 100%);
-    border: 1px solid rgba(64, 192, 87, 0.2);
+    background: rgba(52, 211, 153, 0.08);
+    border: 1px solid rgba(52, 211, 153, 0.15);
 }
 
 .info-card-red {
-    background: linear-gradient(135deg, rgba(250, 82, 82, 0.1) 0%, rgba(224, 49, 49, 0.05) 100%);
-    border: 1px solid rgba(250, 82, 82, 0.2);
+    background: rgba(248, 113, 113, 0.08);
+    border: 1px solid rgba(248, 113, 113, 0.15);
 }
 
 .info-card-yellow {
-    background: linear-gradient(135deg, rgba(250, 176, 5, 0.1) 0%, rgba(245, 159, 0, 0.05) 100%);
-    border: 1px solid rgba(250, 176, 5, 0.2);
+    background: rgba(251, 191, 36, 0.08);
+    border: 1px solid rgba(251, 191, 36, 0.15);
 }
 
 .info-card-blue {
-    background: linear-gradient(135deg, rgba(34, 139, 230, 0.1) 0%, rgba(28, 126, 214, 0.05) 100%);
-    border: 1px solid rgba(34, 139, 230, 0.2);
+    background: rgba(59, 130, 246, 0.08);
+    border: 1px solid rgba(59, 130, 246, 0.15);
 }
 
 .info-card-teal {
-    background: linear-gradient(135deg, rgba(32, 201, 151, 0.1) 0%, rgba(18, 184, 134, 0.05) 100%);
-    border: 1px solid rgba(32, 201, 151, 0.2);
+    background: rgba(20, 184, 166, 0.08);
+    border: 1px solid rgba(20, 184, 166, 0.15);
 }
 
 .info-card-orange {
-    background: linear-gradient(135deg, rgba(253, 126, 20, 0.1) 0%, rgba(247, 103, 7, 0.05) 100%);
-    border: 1px solid rgba(253, 126, 20, 0.2);
+    background: rgba(251, 146, 60, 0.08);
+    border: 1px solid rgba(251, 146, 60, 0.15);
+}
+
+/* ──────────────────────────────────────────
+   Responsive
+────────────────────────────────────────── */
+@media (max-width: 600px) {
+    .header-wrapper {
+        top: 8px;
+    }
+
+    .liquid-glass,
+    .qd-card {
+        border-radius: 16px;
+    }
+
+    .info-row {
+        border-radius: 12px !important;
+    }
+
+    .glass-pill-btn {
+        font-size: 12px;
+        padding: 8px 14px;
+    }
+
+    .glass-button-text:not(.glass-button-text--lg) {
+        font-size: 12px;
+        padding: 9px 16px;
+        gap: 6px;
+    }
+
+    .glass-button-text--lg {
+        font-size: 14px;
+        padding: 12px 24px;
+        gap: 7px;
+    }
+}
+
+
+/* ──────────────────────────────────────────
+   Language picker dropdown
+────────────────────────────────────────── */
+.lang-picker-dropdown [data-menu-item]:hover,
+.lang-picker-dropdown [data-menu-item][data-hovered] {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* ──────────────────────────────────────────
+   SkyoVPN — page watermark
+────────────────────────────────────────── */
+.skyovpn-watermark {
+    font-family: var(--qd-font-display);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: rgba(255, 255, 255, 0.15);
+    user-select: none;
+    pointer-events: none;
 }

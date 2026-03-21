@@ -1,6 +1,7 @@
-import { Button, Container, Group, Text, Title } from '@mantine/core'
+import { Container, Group, Text, Title } from '@mantine/core'
 import { useNavigate } from 'react-router-dom'
 
+import { GlassButton } from '@shared/ui'
 import classes from './ServerError.module.css'
 
 export function ErrorPageComponent() {
@@ -19,9 +20,9 @@ export function ErrorPageComponent() {
                     Try to refresh the page.
                 </Text>
                 <Group justify="center">
-                    <Button onClick={handleRefresh} size="md" variant="outline">
+                    <GlassButton onClick={handleRefresh}>
                         Refresh the page
-                    </Button>
+                    </GlassButton>
                 </Group>
             </Container>
         </div>

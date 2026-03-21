@@ -1,0 +1,42 @@
+@property --glow-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+
+@keyframes glowRotate {
+    to {
+        --glow-angle: 360deg;
+    }
+}
+
+.glowBorder {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: var(--glow-border-width, 2px);
+    background: conic-gradient(
+        from var(--glow-angle),
+        #6b8fff 0%,
+        #a78bfa 12%,
+        #f472b6 24%,
+        #fb923c 36%,
+        #fbbf24 48%,
+        #34d399 60%,
+        #22d3ee 72%,
+        #4f6aff 84%,
+        #6b8fff 100%
+    );
+    animation: glowRotate var(--glow-speed, 8s) linear infinite;
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    opacity: 0.90;
+    filter: blur(1px);
+    pointer-events: none;
+}

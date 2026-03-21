@@ -30,7 +30,7 @@ export function App() {
     return (
         <DirectionProvider>
             <MantineProvider defaultColorScheme="dark" theme={theme}>
-                <ModalsProvider>
+                <ModalsProvider modalProps={{ lockScroll: false }}>
                     <Notifications position={mq ? 'top-right' : 'bottom-right'} />
                     <NavigationProgress />
 

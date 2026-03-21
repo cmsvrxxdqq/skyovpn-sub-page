@@ -20,9 +20,11 @@ export const TimelineBlockRenderer = ({
             classNames={{
                 root: classes.timelineRoot,
                 item: classes.timelineItem,
-                itemBullet: classes.timelineItemBullet
+                itemBullet: classes.timelineItemBullet,
+                itemTitle: classes.timelineItemTitle,
+                itemBody: classes.timelineItemBody
             }}
-            color="cyan"
+            color="indigo"
             lineWidth={2}
         >
             {blocks.map((block, index) => {
@@ -46,18 +48,18 @@ export const TimelineBlockRenderer = ({
                                 dangerouslySetInnerHTML={{
                                     __html: getLocalizedText(block.title, currentLang)
                                 }}
-                                fw={600}
-                                size={isMobile ? 'sm' : 'md'}
+                                fw={700}
+                                size={isMobile ? 'lg' : 'md'}
                             />
                         }
                     >
-                        <Stack gap="xs">
+                        <Stack gap="sm">
                             <Text
                                 c="dimmed"
                                 dangerouslySetInnerHTML={{
                                     __html: getLocalizedText(block.description, currentLang)
                                 }}
-                                size={isMobile ? 'xs' : 'sm'}
+                                size={isMobile ? 'sm' : 'sm'}
                                 style={{ lineHeight: 1.6 }}
                             />
                             {renderBlockButtons(block.buttons, 'light')}

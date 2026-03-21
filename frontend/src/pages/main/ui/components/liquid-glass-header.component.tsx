@@ -15,34 +15,33 @@ export const LiquidGlassHeader = ({
     hasCustomLogo,
     logoUrl,
     icon,
+    isMobile,
     children
 }: IProps) => {
+    const logoSize = isMobile ? 34 : 28
+    const fontSize = isMobile ? '18px' : 'clamp(13px, 2.6vw, 17px)'
+
     return (
         <Box
             className="header-liquid-glass"
             style={{
                 position: 'relative',
-                height: '100px',
+                height: '68px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                padding: '0 44px',
-                background: 'rgba(0, 0, 0, 0.01)',
-                borderRadius: '60px',
-                backdropFilter: 'blur(2px)',
-                WebkitBackdropFilter: 'blur(2px)',
-                filter: 'brightness(110%)'
+                padding: '0 10px 0 16px'
             }}
         >
-            <Group gap="sm" style={{ userSelect: 'none' }} wrap="nowrap">
+            <Group gap={isMobile ? 12 : 10} style={{ userSelect: 'none', flexShrink: 0, position: 'relative', zIndex: 1 }} wrap="nowrap">
                 {hasCustomLogo ? (
                     <Image
                         alt="logo"
                         fit="contain"
                         src={logoUrl}
                         style={{
-                            width: '42px',
-                            height: '42px',
+                            width: `${logoSize}px`,
+                            height: `${logoSize}px`,
                             flexShrink: 0
                         }}
                     />
@@ -50,20 +49,23 @@ export const LiquidGlassHeader = ({
                     icon
                 )}
                 <Text
-                    c="white"
-                    fw={900}
-                    size="32px"
+                    fw={700}
                     style={{
-                        fontFamily: 'Unbounded, sans-serif',
+                        fontFamily: 'var(--qd-font-display)',
+                        fontSize,
                         lineHeight: 'normal',
-                        letterSpacing: '0'
+                        letterSpacing: '-0.04em',
+                        whiteSpace: 'nowrap',
+                        color: 'var(--qd-text-primary)'
                     }}
                 >
                     {brandName}
                 </Text>
             </Group>
 
-            {children}
+            <div className="header-actions-pill">
+                {children}
+            </div>
         </Box>
     )
 }

@@ -6,7 +6,7 @@ import {
     IconLink,
     IconMessageChatbot
 } from '@tabler/icons-react'
-import { ActionIcon, Button, Group, Image, Stack, Text } from '@mantine/core'
+import { Group, Image, Stack, Text } from '@mantine/core'
 import { notifications } from '@mantine/notifications'
 import { useClipboard } from '@mantine/hooks'
 import { modals } from '@mantine/modals'
@@ -14,6 +14,7 @@ import { renderSVG } from 'uqr'
 
 import { constructSubscriptionUrl } from '@shared/utils/construct-subscription-url'
 import { useSubscription } from '@entities/subscription-info-store'
+import { GlassButton } from '@shared/ui'
 import { vibrate } from '@shared/utils/vibrate'
 import { useTranslation } from '@shared/hooks'
 
@@ -35,10 +36,11 @@ export const SubscriptionLinkWidget = ({ supportUrl, hideGetLink }: IProps) => {
     )
 
     const handleCopy = () => {
+        vibrate('tap')
         notifications.show({
             title: t(baseTranslations.linkCopied),
             message: t(baseTranslations.linkCopiedToClipboard),
-            color: 'cyan'
+            color: 'gray'
         })
         clipboard.copy(subscriptionUrl)
     }
@@ -56,26 +58,14 @@ export const SubscriptionLinkWidget = ({ supportUrl, hideGetLink }: IProps) => {
 
         const { icon: Icon, color } = matchedPlatform
             ? matchedPlatform[1]
-            : { icon: IconMessageChatbot, color: 'cyan' }
+            : { icon: IconMessageChatbot, color: 'rgba(197, 205, 224, 0.90)' }
 
         return (
-            <ActionIcon
-                c={color}
-                className="button-glass"
-                component="a"
-                href={supportUrl}
-                radius="md"
-                rel="noopener noreferrer"
-                size="xl"
-                style={{
-                    width: '50px',
-                    height: '50px'
-                }}
-                target="_blank"
-                variant="subtle"
-            >
-                <Icon size={24} />
-            </ActionIcon>
+            <a href={supportUrl} rel="noopener noreferrer" target="_blank">
+                <GlassButton className="glass-button-wrap-primary" size="icon" style={{ color }}>
+                    <Icon size={18} />
+                </GlassButton>
+            </a>
         )
     }
 
@@ -83,8 +73,8 @@ export const SubscriptionLinkWidget = ({ supportUrl, hideGetLink }: IProps) => {
         vibrate('tap')
 
         const subscriptionQrCode = renderSVG(subscriptionUrl, {
-            whiteColor: '#161B22',
-            blackColor: '#22d3ee'
+            whiteColor: '#0f0f11',
+            blackColor: '#C5CDE0'
         })
 
         modals.open({
@@ -108,37 +98,24 @@ export const SubscriptionLinkWidget = ({ supportUrl, hideGetLink }: IProps) => {
                         {t(baseTranslations.scanQrCodeDescription)}
                     </Text>
 
-                    <Button
-                        fullWidth
-                        leftSection={<IconCopy />}
+                    <GlassButton
+                        className="glass-button-wrap-cyan"
                         onClick={handleCopy}
-                        radius="md"
-                        variant="light"
                     >
+                        <IconCopy size={16} />
                         {t(baseTranslations.copyLink)}
-                    </Button>
+                    </GlassButton>
                 </Stack>
             )
         })
     }
 
     return (
-        <Group gap="xs" ml="auto" wrap="nowrap">
+        <Group gap={2} wrap="nowrap">
             {!hideGetLink && (
-                <ActionIcon
-                    c="white"
-                    className="button-glass"
-                    onClick={handleGetLink}
-                    radius="md"
-                    size="xl"
-                    style={{
-                        width: '50px',
-                        height: '50px'
-                    }}
-                    variant="subtle"
-                >
-                    <IconLink size={24} />
-                </ActionIcon>
+                <GlassButton className="glass-button-wrap-primary" size="icon" onClick={handleGetLink}>
+                    <IconLink size={18} />
+                </GlassButton>
             )}
 
             {supportUrl !== '' && renderSupportLink(supportUrl)}

@@ -15,9 +15,16 @@ export default defineConfig({
         react(),
         tsconfigPaths(),
         removeConsole(),
-        webfontDownload([
-            'https://fonts.googleapis.com/css2?family=Unbounded:wght@200..900&display=swap'
-        ], {}),
+        ...(process.env.NODE_ENV === 'production'
+            ? [
+                  webfontDownload(
+                      [
+                          'https://fonts.googleapis.com/css2?family=Unbounded:wght@200..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap'
+                      ],
+                      {}
+                  )
+              ]
+            : []),
         ViteEjsPlugin((viteConfig) => {
             if (process.env.NODE_ENV === 'production') {
                 return {
@@ -113,7 +120,7 @@ export default defineConfig({
         port: 3334,
         cors: false,
         strictPort: true,
-        allowedHosts: true
+        allowedHosts: true,
     },
     resolve: {
         alias: {

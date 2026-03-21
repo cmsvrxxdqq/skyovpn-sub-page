@@ -6,7 +6,7 @@ export const theme = createTheme({
     components,
     cursorType: 'pointer',
     fontFamily:
-        'Unbounded, Montserrat, Vazirmatn, Apple Color Emoji, Noto Sans SC, Twemoji Country Flags, sans-serif',
+        'Montserrat, Unbounded, Vazirmatn, Apple Color Emoji, Noto Sans SC, Twemoji Country Flags, sans-serif',
     fontFamilyMonospace: 'Fira Mono, monospace',
     breakpoints: {
         xs: '25em',
@@ -87,7 +87,7 @@ export const theme = createTheme({
         ]
     },
     primaryShade: 8,
-    primaryColor: 'cyan',
+    primaryColor: 'indigo',
     autoContrast: true,
     luminanceThreshold: 0.3,
     headings: {

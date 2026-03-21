@@ -15,20 +15,9 @@ import {
 import { useAppConfigStoreActions, useIsConfigLoaded } from '@entities/app-config-store'
 import { LoadingScreen } from '@shared/ui'
 
+import { AnimatedBackground } from '@shared/ui/animated-background/animated-background.component'
+
 import classes from './root.module.css'
-
-const WatermarkBackground = () => {
-    const watermarkText =
-        'skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - skyoVPN - '
-
-    return (
-        <div className="watermark-background">
-            {Array.from({ length: 150 }).map((_, i) => (
-                <div key={i}>{watermarkText}</div>
-            ))}
-        </div>
-    )
-}
 
 export function RootLayout() {
     const subscriptionActions = useSubscriptionInfoStoreActions()
@@ -89,7 +78,7 @@ export function RootLayout() {
     if (!isConfigLoaded || !subscription) {
         return (
             <div className={classes.root}>
-                <WatermarkBackground />
+                <AnimatedBackground />
                 <div className={classes.content}>
                     <main className={classes.main}>
                         <LoadingScreen height="100vh" />
@@ -101,7 +90,7 @@ export function RootLayout() {
 
     return (
         <div className={classes.root}>
-            <WatermarkBackground />
+            <AnimatedBackground />
             <div className={classes.content}>
                 <main className={classes.main}>
                     <Outlet />

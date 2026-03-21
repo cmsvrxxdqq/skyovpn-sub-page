@@ -1,6 +1,8 @@
 services:
   remnawave-subscription-page:
-    image: remnawave/subscription-page:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: remnawave-subscription-page
     hostname: remnawave-subscription-page
     restart: always

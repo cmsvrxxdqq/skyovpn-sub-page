@@ -1,8 +1,6 @@
 import {
-    ActionIcon,
     Badge,
     Box,
-    Card,
     CopyButton,
     Group,
     Image,
@@ -16,6 +14,7 @@ import { modals } from '@mantine/modals'
 import { renderSVG } from 'uqr'
 
 import { useSubscription } from '@entities/subscription-info-store'
+import { GlassButton } from '@shared/ui'
 import { vibrate } from '@shared/utils/vibrate'
 import { useTranslation } from '@shared/hooks'
 
@@ -61,8 +60,8 @@ export const RawKeysWidget = ({ isMobile }: IProps) => {
 
     const handleShowQr = (link: ParsedLink) => {
         const qrCode = renderSVG(link.fullLink, {
-            whiteColor: '#161B22',
-            blackColor: '#22d3ee'
+            whiteColor: '#0f0f11',
+            blackColor: '#C5CDE0'
         })
 
         modals.open({
@@ -88,51 +87,70 @@ export const RawKeysWidget = ({ isMobile }: IProps) => {
     }
 
     return (
-        <Box style={{ maxWidth: '900px', margin: '0 auto', width: '100%' }}>
+        <Box style={{ width: '100%' }}>
             <Box
-                className="liquid-glass"
+                className="qd-card"
                 style={{
                     position: 'relative',
-                    padding: isMobile ? '28px' : '38px 70px'
+                    padding: isMobile ? '20px' : '28px'
                 }}
             >
                 <Stack gap="md">
                     <Group gap="sm" justify="space-between">
                         <Title
-                            c="white"
-                            fw={900}
+                            c="var(--qd-text-primary)"
+                            fw={700}
                             order={4}
-                            size="20px"
-                            style={{ fontFamily: 'Unbounded, sans-serif' }}
+                            size="18px"
+                            style={{
+                                fontFamily: 'var(--qd-font-display)',
+                                letterSpacing: '-0.03em'
+                            }}
                         >
                             {t(baseTranslations.connectionKeysHeader)}
                         </Title>
                         {parsedLinks.length > 1 && (
-                            <Badge color="cyan" size="lg" variant="light">
+                            <Badge
+                                color="gray"
+                                size="sm"
+                                variant="light"
+                                style={{ fontFamily: 'var(--qd-font-body)' }}
+                            >
                                 {parsedLinks.length}
                             </Badge>
                         )}
                     </Group>
 
                 <ScrollArea.Autosize mah={300} scrollbars="y">
-                    <Stack gap="xs">
+                    <Stack gap={0}>
                         {parsedLinks.map((link, index) => (
-                            <Box className={classes.keyBox} key={index} p="xs">
+                            <Box
+                                className={classes.keyBox}
+                                key={index}
+                                px="sm"
+                                py="xs"
+                                style={{
+                                    borderBottom: index < parsedLinks.length - 1
+                                        ? '1px solid var(--qd-surface-border)'
+                                        : 'none'
+                                }}
+                            >
                                 <Box className={classes.keyRow}>
                                     <Box className={classes.keyInfo}>
                                         <IconKey
-                                            size={isMobile ? 16 : 18}
+                                            size={isMobile ? 15 : 16}
                                             style={{
-                                                color: 'var(--mantine-color-cyan-4)',
+                                                color: 'rgba(197, 205, 224, 0.70)',
                                                 flexShrink: 0
                                             }}
                                         />
                                         <Box className={classes.keyName}>
                                             <Text
-                                                c="white"
+                                                c="var(--qd-text-primary)"
                                                 fw={500}
                                                 size={isMobile ? 'xs' : 'sm'}
                                                 span
+                                                style={{ fontFamily: 'var(--qd-font-body)' }}
                                             >
                                                 {link.name}
                                             </Text>
@@ -142,35 +160,33 @@ export const RawKeysWidget = ({ isMobile }: IProps) => {
                                     <Group gap={4} wrap="nowrap">
                                         <CopyButton value={link.fullLink}>
                                             {({ copied, copy }) => (
-                                                <ActionIcon
-                                                    color={copied ? 'teal' : 'gray'}
+                                                <GlassButton
+                                                    size="icon"
                                                     onClick={() => {
                                                         vibrate('drop')
                                                         copy()
                                                     }}
-                                                    size={isMobile ? 'sm' : 'md'}
-                                                    variant="subtle"
+                                                    style={{ color: copied ? '#2dd4bf' : undefined }}
                                                 >
                                                     {copied ? (
                                                         <IconCheck size={isMobile ? 14 : 16} />
                                                     ) : (
                                                         <IconCopy size={isMobile ? 14 : 16} />
                                                     )}
-                                                </ActionIcon>
+                                                </GlassButton>
                                             )}
                                         </CopyButton>
 
-                                        <ActionIcon
-                                            color="cyan"
+                                        <GlassButton
+                                            size="icon"
                                             onClick={() => {
                                                 vibrate('tap')
                                                 handleShowQr(link)
                                             }}
-                                            size={isMobile ? 'sm' : 'md'}
-                                            variant="subtle"
+                                            style={{ color: 'rgba(197, 205, 224, 0.80)' }}
                                         >
                                             <IconQrcode size={isMobile ? 14 : 16} />
-                                        </ActionIcon>
+                                        </GlassButton>
                                     </Group>
                                 </Box>
                             </Box>
