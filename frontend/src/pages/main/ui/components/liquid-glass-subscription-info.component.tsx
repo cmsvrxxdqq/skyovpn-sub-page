@@ -75,9 +75,9 @@ export const LiquidGlassSubscriptionInfo = ({ isMobile }: IProps) => {
 
     const bandwidthValue = (() => {
         const used = formatBytes(user.trafficUsedBytes)
-        if (user.trafficLimitBytes === '0') return `${used} / ∞ GB`
+        if (user.trafficLimitBytes === '0') return `${used}/∞ GB`
         const limit = formatBytes(user.trafficLimitBytes)
-        return `${used} / ${limit}`
+        return `${used}/${limit}`
     })()
 
     return (
